@@ -2,17 +2,25 @@
   <li>
     <label>
       <!-- <input type="checkbox" :checked="todo.done" @change="changeDone(todo.id)"/> -->
+      <!-- 不推荐，因为todo是props -->
       <input type="checkbox" v-model="todo.done"/>
       <span>{{todo.title}}</span>
     </label>
-    <button class="btn btn-danger" style="display:none">删除</button>
+    <button class="btn btn-danger" @click="deleteItem(todo.id)">删除</button>
   </li>
 </template>
 
 <script>
     export default {
       name:"TodoItem",
-      props:['todo','changeDone'],
+      props:['todo','changeDone','deleteTodo'],
+      methods: {
+        deleteItem(id){
+          if(confirm("确定删除吗？")){
+            this.deleteTodo(id)
+          }
+        }
+      },
     }
 </script>
 
@@ -50,5 +58,13 @@
 
   li:last-child {
   border-bottom: none;
+  }
+
+  li:hover{
+    background-color: #ddd;
+  }
+
+  li:hover button{
+    display: block;
   }
 </style>

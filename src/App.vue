@@ -3,8 +3,8 @@
     <div class="todo-wrap">
       <MyHeader :addItem="addItem"/>
       <!-- <TodoList :todos="todos" :changeDone="changeDone"/> -->
-      <TodoList :todos="todos"/> 
-      <MyFooter/>
+      <TodoList :todos="todos" :deleteTodo="deleteTodo" /> 
+      <MyFooter :todos="todos" :changeAllChecked="changeAllChecked" :deleteAllChecked="deleteAllChecked"/>
     </div>
   </div>
 </template>
@@ -47,7 +47,19 @@
         //     }
         //   });
         // }
+        deleteTodo(id){
+          this.todos=this.todos.filter(todo => todo.id !==id)
+        },
+        changeAllChecked(done){
+          this.todos.forEach(todo => todo.done = done)
+        },
+        deleteAllChecked(){
+          if(confirm("确定删除已完成任务吗？")){
+            this.todos=this.todos.filter(todo => todo.done === false)
+          }
+        }
       },
+      
   }
 </script>
 
