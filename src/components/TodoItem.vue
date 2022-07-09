@@ -17,7 +17,8 @@
       methods: {
         deleteItem(id){
           if(confirm("确定删除吗？")){
-            this.deleteTodo(id)
+            //this.deleteTodo(id)
+            this.$emit('deleteTodo',id);
           }
         }
       },

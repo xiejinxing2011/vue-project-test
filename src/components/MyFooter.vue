@@ -14,7 +14,8 @@
 <script>
     export default {
       name:"MyFooter",
-      props:['todos','changeAllChecked','deleteAllChecked'],
+      //props:['todos','changeAllChecked','deleteAllChecked'],
+      props:['todos','deleteAllChecked'],
       computed:{
         total(){
           return this.todos.length;
@@ -27,8 +28,8 @@
             return this.total == this.doneTotal && this.total>0
           },
           set(value){
-            console.log(value)
-             this.changeAllChecked(value)
+             //this.changeAllChecked(value)
+             this.$emit('changeAllChecked',value);
           }
         }
       },
