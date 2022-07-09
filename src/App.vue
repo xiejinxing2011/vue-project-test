@@ -21,21 +21,11 @@
       TodoList
     },
     data(){
-        return{
-          todos:[
-            {
-              id:'001',title:'吃饭',done:true
-            },
-            {
-              id:'002',title:'睡觉',done:false
-            },
-            {
-              id:'003',title:'喝酒',done:false
-            }
-          ]
-        }
-      },
-      methods: {
+      return{
+        todos:JSON.parse(localStorage.getItem('todos')) || []
+      }
+    },
+    methods: {
         addItem(v){
           console.log("接收到参数：",v);
           this.todos.unshift(v)
@@ -58,7 +48,17 @@
             this.todos=this.todos.filter(todo => todo.done === false)
           }
         }
-      },
+    },
+    watch:{
+      todos:{
+        //开启深度监视，监测数组中对象的属性变化
+        deep:true,
+        handler(newValue,oldValue){
+          localStorage.setItem('todos',JSON.stringify(newValue));
+        }
+      }
+    },
+      
       
   }
 </script>
