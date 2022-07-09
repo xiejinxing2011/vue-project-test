@@ -62,7 +62,7 @@
       }
     },
     mounted() {
-      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked)
+      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
     },      
   }
 </script>
