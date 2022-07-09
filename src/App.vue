@@ -1,10 +1,10 @@
 <template>
   <div class="todo-container">
     <div class="todo-wrap">
-      <MyHeader :addItem="addItem"/>
+      <MyHeader  v-on:addItem="addItem"/>
       <!-- <TodoList :todos="todos" :changeDone="changeDone"/> -->
       <TodoList :todos="todos" :deleteTodo="deleteTodo" /> 
-      <MyFooter :todos="todos" :changeAllChecked="changeAllChecked" :deleteAllChecked="deleteAllChecked"/>
+      <MyFooter :todos="todos" ref="foot" :deleteAllChecked="deleteAllChecked" @click.native="al"/><!-- 加native实现click不是自定义组件，不加则认为click是自定义组件-->
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@
       }
     },
     methods: {
-        addItem(v){
+        addItem(v,...x){
           console.log("接收到参数：",v);
           this.todos.unshift(v)
         },
@@ -47,6 +47,9 @@
           if(confirm("确定删除已完成任务吗？")){
             this.todos=this.todos.filter(todo => todo.done === false)
           }
+        },
+        al(){
+          alert(111)
         }
     },
     watch:{
@@ -58,8 +61,9 @@
         }
       }
     },
-      
-      
+    mounted() {
+      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked)
+    },      
   }
 </script>
 

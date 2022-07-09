@@ -1,7 +1,7 @@
 <template>
   <ul class="todo-main">
     <!-- <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" :changeDone="changeDone"/> -->
-    <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" :deleteTodo="deleteTodo"/>
+    <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @deleteTodo="deleteTodo"/>
   </ul>
 </template>
 
