@@ -3,13 +3,15 @@
     <div class="todo-wrap">
       <MyHeader  v-on:addItem="addItem"/>
       <!-- <TodoList :todos="todos" :changeDone="changeDone"/> -->
-      <TodoList :todos="todos" :deleteTodo="deleteTodo" /> 
+      <TodoList :todos="todos" /> 
       <MyFooter :todos="todos" ref="foot" :deleteAllChecked="deleteAllChecked" @click.native="al"/><!-- 加native实现click不是自定义组件，不加则认为click是自定义组件-->
     </div>
   </div>
 </template>
 
 <script>
+import pubsub from 'pubsub-js'
+
   import MyHeader from './components/MyHeader'
   import MyFooter from './components/MyFooter'
   import TodoList from './components/TodoList'
@@ -49,8 +51,18 @@
           }
         },
         al(){
-          alert(111)
-        }
+          alert(111);
+        },
+        
+    },
+    mounted() {
+      this.$bus.$on("deleteTodoItem",this.deleteTodo);
+      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
+
+      pubsub.subscribe('hello',deleteTodo);//消息订阅，当有人发布名为hello的消息时，执行deleteTodo回调
+    },
+    beforeDestroy() {
+      this.$bus.$off("deleteTodo");
     },
     watch:{
       todos:{
@@ -61,9 +73,6 @@
         }
       }
     },
-    mounted() {
-      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
-    },      
   }
 </script>
 
