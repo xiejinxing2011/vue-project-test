@@ -13,12 +13,15 @@
 <script>
     export default {
       name:"TodoItem",
-      props:['todo','changeDone','deleteTodo'],
+
+      //props:['todo','changeDone','deleteTodo'],
+      props:['todo','changeDone'],
       methods: {
         deleteItem(id){
           if(confirm("确定删除吗？")){
             //this.deleteTodo(id)
-            this.$emit('deleteTodo',id);
+            //this.$emit('deleteTodo',id);
+            this.$bus.$emit("deleteTodoItem",id);
           }
         }
       },

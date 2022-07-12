@@ -3,13 +3,18 @@
     <div class="todo-wrap">
       <MyHeader  v-on:addItem="addItem"/>
       <!-- <TodoList :todos="todos" :changeDone="changeDone"/> -->
-      <TodoList :todos="todos" :deleteTodo="deleteTodo" /> 
+
+      <!-- <TodoList :todos="todos" :deleteTodo="deleteTodo" />  -->
+      <TodoList :todos="todos" /> 
       <MyFooter :todos="todos" ref="foot" :deleteAllChecked="deleteAllChecked" @click.native="al"/><!-- 加native实现click不是自定义组件，不加则认为click是自定义组件-->
+      <!-- <MyFooter :todos="todos" ref="foot" :deleteAllChecked="deleteAllChecked" @click.native="al"/> -->
     </div>
   </div>
 </template>
 
 <script>
+import pubsub from 'pubsub-js'
+
   import MyHeader from './components/MyHeader'
   import MyFooter from './components/MyFooter'
   import TodoList from './components/TodoList'
@@ -49,8 +54,18 @@
           }
         },
         al(){
-          alert(111)
-        }
+          alert(111);
+        },
+        
+    },
+    mounted() {
+      this.$bus.$on("deleteTodoItem",this.deleteTodo);
+      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
+
+      pubsub.subscribe('hello',deleteTodo);//消息订阅，当有人发布名为hello的消息时，执行deleteTodo回调
+    },
+    beforeDestroy() {
+      this.$bus.$off("deleteTodo");
     },
     watch:{
       todos:{
@@ -61,9 +76,18 @@
         }
       }
     },
+
     mounted() {
-      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked)
+
+      //用ref绑定自定义事件时更加灵活，可以在mount里面进行延时，定时等操作
+      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
+      //  使用全局事件总线
+      this.$bus.$on('deleteTodo',this.deleteTodo);
+
     },      
+    beforeDestroy(){//解绑全局总线中自定义事件
+      this.$bus.$off('deleteTodo');}
+
   }
 </script>
 

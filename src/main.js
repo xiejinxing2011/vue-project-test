@@ -5,4 +5,7 @@ Vue.config.productionTip = false
 
 new Vue({
   render: h => h(App),
-}).$mount('#app')
+  beforeCreate(){
+    Vue.prototype.$bus = this//开启全局事件总线
+  }
+}).$mount("#app")
