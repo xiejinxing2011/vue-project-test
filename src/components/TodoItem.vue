@@ -13,6 +13,8 @@
 <script>
     export default {
       name:"TodoItem",
+
+      //props:['todo','changeDone','deleteTodo'],
       props:['todo','changeDone'],
       methods: {
         deleteItem(id){

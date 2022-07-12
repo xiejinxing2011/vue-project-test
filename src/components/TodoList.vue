@@ -1,6 +1,8 @@
 <template>
   <ul class="todo-main">
     <!-- <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" :changeDone="changeDone"/> -->
+    <!-- <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @deleteTodo="deleteTodo"/> -->
+
     <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo"/>
   </ul>
 </template>
@@ -14,7 +16,9 @@
           TodoItem
       },
       // props:['todos','changeDone']
-      props:['todos']
+
+      //props:['todos','deleteTodo']
+      props:['todos']//delete函数为中转作用，直接使用全局事件总线
   }
 </script>
 
