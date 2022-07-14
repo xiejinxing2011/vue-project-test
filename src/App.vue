@@ -42,7 +42,11 @@ import pubsub from 'pubsub-js'
         //     }
         //   });
         // }
-        deleteTodo(id){
+        // deleteTodo(id){
+        //   this.todos=this.todos.filter(todo => todo.id !==id)
+        // },
+        deleteTodo(_,id){//使用消息订阅时，回调函数需要接收Msg作为消息名，否则接收不到真正的参数
+        console.log("订阅消息触发，执行回调");
           this.todos=this.todos.filter(todo => todo.id !==id)
         },
         changeAllChecked(done){
@@ -78,16 +82,18 @@ import pubsub from 'pubsub-js'
     },
 
     mounted() {
-
       //用ref绑定自定义事件时更加灵活，可以在mount里面进行延时，定时等操作
       this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
       //  使用全局事件总线
-      this.$bus.$on('deleteTodo',this.deleteTodo);
+      //this.$bus.$on('deleteTodo',this.deleteTodo);
 
+      this.pubId = pubsub.subscribe("deleteTodo",this.deleteTodo);
     },      
     beforeDestroy(){//解绑全局总线中自定义事件
-      this.$bus.$off('deleteTodo');}
-
+      this.$bus.$off('deleteTodo');
+      pubsub.unsubscribe(this.pubId);
+      },
+      
   }
 </script>
 
