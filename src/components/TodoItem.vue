@@ -4,9 +4,16 @@
       <!-- <input type="checkbox" :checked="todo.done" @change="changeDone(todo.id)"/> -->
       <!-- 不推荐，因为todo是props -->
       <input type="checkbox" v-model="todo.done"/>
-      <span>{{todo.title}}</span>
+      <span v-show="!todo.isEdit">{{todo.title}}</span>
+      <input type="text" 
+      v-show="todo.isEdit"
+      v-model="itemValue" 
+      @blur="editItem"
+      ref="inputItem"
+      />
     </label>
     <button class="btn btn-danger" @click="deleteItem(todo.id)">删除</button>
+    <button class="btn btn-edit" @click="changeIsEdit(todo.id)">编辑</button>
   </li>
 </template>
 
@@ -17,6 +24,12 @@
     name:"TodoItem",
     //props:['todo','changeDone','deleteTodo'],
     props:['todo','changeDone'],
+    data() {
+      return {
+        itemValue:''
+      }
+    },
+    
     methods: {
       deleteItem(id){
         if(confirm("确定删除吗？")){
@@ -25,8 +38,21 @@
           //this.$bus.$emit("deleteTodoItem",id);
           pubsub.publish("deleteTodo",id);
         }
+      },
+      changeIsEdit(id){
+        this.itemValue = this.todo.title;
+        this.$bus.$emit("changeIsEdit",id);
+
+        this.$nextTick(function(){
+          this.$refs.inputItem.focus();
+        })
+      },
+      editItem(){
+        this.todo.title = this.itemValue;
+        this.$bus.$emit("editItem",this.todo.id,this.itemValue);
       }
     },
+    
   }
 </script>
 
@@ -56,6 +82,7 @@
   float: right;
   display: none;
   margin-top: 3px;
+  margin-right: 5px;
   }
 
   li:before {
@@ -73,4 +100,6 @@
   li:hover button{
     display: block;
   }
+
+  
 </style>

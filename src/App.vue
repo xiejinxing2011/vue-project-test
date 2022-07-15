@@ -31,46 +31,56 @@ import pubsub from 'pubsub-js'
       }
     },
     methods: {
-        addItem(v,...x){
-          console.log("接收到参数：",v);
-          this.todos.unshift(v)
-        },
-        // changeDone(id){
-        //   this.todos.forEach(todo => {
-        //     if(todo.id === id){
-        //       todo.done = !todo.done
-        //     }
-        //   });
-        // }
-        // deleteTodo(id){
-        //   this.todos=this.todos.filter(todo => todo.id !==id)
-        // },
-        deleteTodo(_,id){//使用消息订阅时，回调函数需要接收Msg作为消息名，否则接收不到真正的参数
-        console.log("订阅消息触发，执行回调");
-          this.todos=this.todos.filter(todo => todo.id !==id)
-        },
-        changeAllChecked(done){
-          this.todos.forEach(todo => todo.done = done)
-        },
-        deleteAllChecked(){
-          if(confirm("确定删除已完成任务吗？")){
-            this.todos=this.todos.filter(todo => todo.done === false)
+      addItem(v,...x){
+        console.log("接收到参数：",v);
+        this.todos.unshift(v)
+      },
+      // changeDone(id){
+      //   this.todos.forEach(todo => {
+      //     if(todo.id === id){
+      //       todo.done = !todo.done
+      //     }
+      //   });
+      // }
+      // deleteTodo(id){
+      //   this.todos=this.todos.filter(todo => todo.id !==id)
+      // },
+      deleteTodo(_,id){//使用消息订阅时，回调函数需要接收Msg作为消息名，否则接收不到真正的参数
+      console.log("订阅消息触发，执行回调");
+        this.todos=this.todos.filter(todo => todo.id !==id)
+      },
+      changeAllChecked(done){
+        this.todos.forEach(todo => todo.done = done)
+      },
+      deleteAllChecked(){
+        if(confirm("确定删除已完成任务吗？")){
+          this.todos=this.todos.filter(todo => todo.done === false)
+        }
+      },
+      al(){
+        //alert(111);
+      },
+      changeIsEdit(id){
+        if(!this.todos.hasOwnProperty('isEdit')){
+          this.$set(this.todos,'isEdit',false);
+        }
+        this.todos.forEach(todo => {
+          if(todo.id == id){
+            todo.isEdit = !todo.isEdit
           }
-        },
-        al(){
-          alert(111);
-        },
-        
+        })
+      },
+      editItem(id,itemValue){
+        this.todos.forEach(todo => {
+          if(todo.id == id){
+            console.log(id,itemValue)
+            todo.title = itemValue
+            todo.isEdit = false
+          }
+        })
+      }
     },
-    mounted() {
-      this.$bus.$on("deleteTodoItem",this.deleteTodo);
-      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
 
-      pubsub.subscribe('hello',deleteTodo);//消息订阅，当有人发布名为hello的消息时，执行deleteTodo回调
-    },
-    beforeDestroy() {
-      this.$bus.$off("deleteTodo");
-    },
     watch:{
       todos:{
         //开启深度监视，监测数组中对象的属性变化
@@ -86,13 +96,20 @@ import pubsub from 'pubsub-js'
       this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
       //  使用全局事件总线
       //this.$bus.$on('deleteTodo',this.deleteTodo);
-
+      //消息订阅，当有人发布名为hello的消息时，执行deleteTodo回调
       this.pubId = pubsub.subscribe("deleteTodo",this.deleteTodo);
+
+      this.$bus.$on("changeIsEdit",this.changeIsEdit);
+      this.$bus.$on("editItem",this.editItem);
+      this.todos.forEach(todo => 
+            todo.isEdit = false
+        )
+      
     },      
     beforeDestroy(){//解绑全局总线中自定义事件
-      this.$bus.$off('deleteTodo');
+      this.$bus.$off(['deleteTodo','changeIsEdit']);
       pubsub.unsubscribe(this.pubId);
-      },
+    },
       
   }
 </script>
@@ -118,10 +135,16 @@ import pubsub from 'pubsub-js'
     color: #fff;
     background-color: #da4f49;
     border: 1px solid #bd362f;
+    
   }
   .btn-danger :hover{
     color: #fff;
     background-color: #bd362f;
+  }
+  .btn-edit{
+    color: #fff;
+    background-color: #2fbd5a;
+    border: 1px solid green;
   }
   .btn :focus{
     outline: none;
