@@ -1,161 +1,40 @@
 <template>
-  <div class="todo-container">
-    <div class="todo-wrap">
-      <MyHeader  v-on:addItem="addItem"/>
-      <!-- <TodoList :todos="todos" :changeDone="changeDone"/> -->
-
-      <!-- <TodoList :todos="todos" :deleteTodo="deleteTodo" />  -->
-      <TodoList :todos="todos" /> 
-      <MyFooter :todos="todos" ref="foot" :deleteAllChecked="deleteAllChecked" @click.native="al"/><!-- 加native实现click不是自定义组件，不加则认为click是自定义组件-->
-      <!-- <MyFooter :todos="todos" ref="foot" :deleteAllChecked="deleteAllChecked" @click.native="al"/> -->
-    </div>
+  <div>
+    <Count/>
   </div>
 </template>
 
 <script>
-import pubsub from 'pubsub-js'
+  import Count from './components/Count'
 
-  import MyHeader from './components/MyHeader'
-  import MyFooter from './components/MyFooter'
-  import TodoList from './components/TodoList'
   export default {
     name: 'App',
     components: {
-      MyHeader,
-      MyFooter,
-      TodoList
-    },
+    Count,
+},
     data(){
       return{
-        todos:JSON.parse(localStorage.getItem('todos')) || []
+
       }
     },
     methods: {
-      addItem(v,...x){
-        console.log("接收到参数：",v);
-        this.todos.unshift(v)
-      },
-      // changeDone(id){
-      //   this.todos.forEach(todo => {
-      //     if(todo.id === id){
-      //       todo.done = !todo.done
-      //     }
-      //   });
-      // }
-      // deleteTodo(id){
-      //   this.todos=this.todos.filter(todo => todo.id !==id)
-      // },
-      deleteTodo(_,id){//使用消息订阅时，回调函数需要接收Msg作为消息名，否则接收不到真正的参数
-      console.log("订阅消息触发，执行回调");
-        this.todos=this.todos.filter(todo => todo.id !==id)
-      },
-      changeAllChecked(done){
-        this.todos.forEach(todo => todo.done = done)
-      },
-      deleteAllChecked(){
-        if(confirm("确定删除已完成任务吗？")){
-          this.todos=this.todos.filter(todo => todo.done === false)
-        }
-      },
-      al(){
-        //alert(111);
-      },
-      changeIsEdit(id){
-        if(!this.todos.hasOwnProperty('isEdit')){
-          this.$set(this.todos,'isEdit',false);
-        }
-        this.todos.forEach(todo => {
-          if(todo.id == id){
-            todo.isEdit = !todo.isEdit
-          }
-        })
-      },
-      editItem(id,itemValue){
-        this.todos.forEach(todo => {
-          if(todo.id == id){
-            console.log(id,itemValue)
-            todo.title = itemValue
-            todo.isEdit = false
-          }
-        })
-      }
+      
     },
 
     watch:{
-      todos:{
-        //开启深度监视，监测数组中对象的属性变化
-        deep:true,
-        handler(newValue,oldValue){
-          localStorage.setItem('todos',JSON.stringify(newValue));
-        }
-      }
+      
     },
 
     mounted() {
-      //用ref绑定自定义事件时更加灵活，可以在mount里面进行延时，定时等操作
-      this.$refs.foot.$on('changeAllChecked',this.changeAllChecked);
-      //  使用全局事件总线
-      //this.$bus.$on('deleteTodo',this.deleteTodo);
-      //消息订阅，当有人发布名为hello的消息时，执行deleteTodo回调
-      this.pubId = pubsub.subscribe("deleteTodo",this.deleteTodo);
-
-      this.$bus.$on("changeIsEdit",this.changeIsEdit);
-      this.$bus.$on("editItem",this.editItem);
-      this.todos.forEach(todo => 
-            todo.isEdit = false
-        )
       
     },      
     beforeDestroy(){//解绑全局总线中自定义事件
-      this.$bus.$off(['deleteTodo','changeIsEdit']);
-      pubsub.unsubscribe(this.pubId);
+      
     },
       
   }
 </script>
 
 <style>
-  /*base*/
-  body{
-    background: #fff;
-  }
-  .btn{
-    display: inline-block;
-    padding: 4px 12px;
-    margin-bottom: 0;
-    font-size: 14px;
-    line-height: 20px;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2) 0 1px 2px rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
-  }
-  .btn-danger{
-    color: #fff;
-    background-color: #da4f49;
-    border: 1px solid #bd362f;
-    
-  }
-  .btn-danger :hover{
-    color: #fff;
-    background-color: #bd362f;
-  }
-  .btn-edit{
-    color: #fff;
-    background-color: #2fbd5a;
-    border: 1px solid green;
-  }
-  .btn :focus{
-    outline: none;
-  }
-  .todo-container{
-    width:600px;
-    margin: 0 auto ;
-  }
-  .todo-container .todo-wrap{
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
+  
 </style>
