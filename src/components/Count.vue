@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>当前求和为：？？？</h2>
+    <h2>当前求和为：{{$store.state.sum}}</h2>
     <select v-model.number="n">
       <option value="1">1</option>
       <option value="2">2</option>
